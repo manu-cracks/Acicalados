@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Icon } from '@/components/icons'
@@ -40,7 +40,7 @@ const statusConfig: Record<number, { icon: 'check' | 'clock' | 'x'; color: strin
   },
 }
 
-export default function PaymentResultPage() {
+function PaymentResultContent() {
   const searchParams = useSearchParams()
   const token = searchParams.get('token')
   const [result, setResult] = useState<PaymentResult>(null)
@@ -166,5 +166,25 @@ export default function PaymentResultPage() {
         </div>
       </section>
     </div>
+  )
+}
+
+export default function PaymentResultPage() {
+  return (
+    <Suspense fallback={
+      <div style={{ paddingTop: 100, paddingBottom: 120, minHeight: '70vh', display: 'flex', alignItems: 'center' }}>
+        <div className="container" style={{ textAlign: 'center', maxWidth: 600, margin: '0 auto' }}>
+          <div style={{
+            width: 80, height: 80, borderRadius: '50%', border: '2px solid var(--line)',
+            borderTopColor: 'var(--gold)', margin: '0 auto',
+            animation: 'spin 1s linear infinite',
+          }} />
+          <p className="serif" style={{ fontSize: 24, marginTop: 30 }}>Cargando...</p>
+          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+        </div>
+      </div>
+    }>
+      <PaymentResultContent />
+    </Suspense>
   )
 }
